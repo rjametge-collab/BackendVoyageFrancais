@@ -2,19 +2,7 @@ const mongoose = require("mongoose");
 
 const tripSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-
     destination: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Destination",
-      required: true,
-    },
-
-    title: {
       type: String,
       required: true,
     },
@@ -29,38 +17,9 @@ const tripSchema = new mongoose.Schema(
       required: true,
     },
 
-    travelers: {
-      type: Number,
-      default: 1,
-    },
-
-    budget: {
-      type: Number,
-      default: 0,
-    },
-
-    selectedLessons: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Lesson",
-      },
-    ],
-
-    itinerary: [
-      {
-        day: Number,
-        activity: String,
-      },
-    ],
-
-    travelNotes: {
+    notes: {
       type: String,
-    },
-
-    status: {
-      type: String,
-      enum: ["Planning", "Booked", "Completed"],
-      default: "Planning",
+      default: "",
     },
   },
   {
