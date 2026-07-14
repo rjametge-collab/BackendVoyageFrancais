@@ -9,6 +9,7 @@ const lessonRoutes = require("./routes/lessonRoutes");
 const tripRoutes = require("./routes/tripRoutes");
 
 const app = express();
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
@@ -40,9 +41,13 @@ app.use(
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI || process.env.MONGO_URI,
-    }),
+    ...(mongoUri
+      ? {
+          store: MongoStore.create({
+            mongoUrl: mongoUri,
+          }),
+        }
+      : {}),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
