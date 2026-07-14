@@ -1,10 +1,38 @@
 const Destination = require("../models/Destination");
 
+const toImageUrl = (imagePath, req) => {
+  if (!imagePath) {
+    return "";
+  }
+
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    return imagePath;
+  }
+
+  if (imagePath.startsWith("/Images/")) {
+    return `http://localhost:5173${imagePath}`;
+  }
+
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+
+  if (imagePath.startsWith("/uploads/")) {
+    return `${baseUrl}${imagePath}`;
+  }
+
+  return `${baseUrl}/uploads/destinations/${imagePath}`;
+};
+
+const serializeDestination = (destinationDoc, req) => {
+  const destination = destinationDoc.toObject();
+  destination.image = toImageUrl(destination.image, req);
+  return destination;
+};
+
 // GET all destinations
 const getDestinations = async (req, res) => {
   try {
     const destinations = await Destination.find();
-    res.status(200).json(destinations);
+    res.status(200).json(destinations.map((item) => serializeDestination(item, req)));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -21,7 +49,7 @@ const getDestinationById = async (req, res) => {
       });
     }
 
-    res.status(200).json(destination);
+    res.status(200).json(serializeDestination(destination, req));
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -31,9 +59,16 @@ const getDestinationById = async (req, res) => {
 // CREATE destination
 const createDestination = async (req, res) => {
   try {
-    const destination = await Destination.create(req.body);
+    const payload = {
+      ...req.body,
+      image: req.file
+        ? `/uploads/destinations/${req.file.filename}`
+        : req.body.image,
+    };
 
-    res.status(201).json(destination);
+    const destination = await Destination.create(payload);
+
+    res.status(201).json(serializeDestination(destination, req));
 
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -44,9 +79,17 @@ const createDestination = async (req, res) => {
 const updateDestination = async (req, res) => {
   try {
 
+    const payload = {
+      ...req.body,
+    };
+
+    if (req.file) {
+      payload.image = `/uploads/destinations/${req.file.filename}`;
+    }
+
     const destination = await Destination.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      payload,
       {
         new: true,
         runValidators: true,
@@ -59,7 +102,7 @@ const updateDestination = async (req, res) => {
       });
     }
 
-    res.status(200).json(destination);
+    res.status(200).json(serializeDestination(destination, req));
 
   } catch (error) {
     res.status(400).json({ error: error.message });

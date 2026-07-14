@@ -1,4 +1,5 @@
 const express = require("express");
+const { destinationUpload } = require("../middleware/upload");
 
 const router = express.Router();
 
@@ -17,10 +18,10 @@ router.get("/", getDestinations);
 router.get("/:id", getDestinationById);
 
 // CREATE
-router.post("/", createDestination);
+router.post("/", destinationUpload.single("image"), createDestination);
 
 // UPDATE
-router.put("/:id", updateDestination);
+router.put("/:id", destinationUpload.single("image"), updateDestination);
 
 // DELETE
 router.delete("/:id", deleteDestination);

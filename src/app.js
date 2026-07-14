@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const session = require("express-session");
 const MongoStore = require("connect-mongo").default;
 const cors = require("cors");
@@ -17,6 +18,8 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use(
   session({
