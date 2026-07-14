@@ -15,8 +15,9 @@ const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+const sessionSecret = process.env.SESSION_SECRET || "dev-insecure-secret";
 if (!process.env.SESSION_SECRET) {
-  throw new Error("Missing SESSION_SECRET environment variable");
+  console.warn("⚠️ SESSION_SECRET is not set. Using insecure fallback secret.");
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -36,7 +37,7 @@ app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
