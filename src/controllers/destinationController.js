@@ -10,7 +10,8 @@ const toImageUrl = (imagePath, req) => {
   }
 
   if (imagePath.startsWith("/Images/")) {
-    return `http://localhost:5173${imagePath}`;
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    return `${clientUrl}${imagePath}`;
   }
 
   const baseUrl = `${req.protocol}://${req.get("host")}`;
