@@ -14,7 +14,9 @@ const app = require("./app");
 
 // Connect to MongoDB
 mongoose
-  .connect(mongoUri)
+  .connect(mongoUri, {
+    serverSelectionTimeoutMS: 15000,
+  })
   .then(() => {
     console.log("✅ MongoDB Connected");
 
@@ -25,4 +27,6 @@ mongoose
   .catch((error) => {
     console.error("❌ MongoDB Connection Error:");
     console.error(error.message);
+    console.error("ℹ️ Check MONGODB_URI, Mongo Atlas Network Access, and DB user credentials.");
+    process.exit(1);
   });
