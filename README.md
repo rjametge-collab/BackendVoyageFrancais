@@ -1,6 +1,12 @@
 Description of the app 
 https://github.com/rjametge-collab/travelAndspeakProject-VoyageFrancais.description/blob/main/Voyage_Francais_README.md
 
+local environment: http://localhost:5174/
+
+Render: https://frontendcapstonevoyagefrancais.onrender.com/
+
+
+
 # Voyage Français — Backend API 🇫🇷🚀
 
 ## Overview
